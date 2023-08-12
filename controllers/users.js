@@ -17,10 +17,11 @@ module.exports.getUser = (req, res) => {
     .catch((err) => {
       if (err.message === 'NoValidId') {
         res.status(404).send({ message: 'Пользователя нет в базе' });
-      } else {
+      } else if (err.kind === 'ObjectId') {
         res.status(400).send({ message: ' Переданы некорректные данные пользователя' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -47,13 +48,11 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res
-          .status(400)
-          .send({ message: ' Переданы некорректные данные пользователя' });
+        res.status(400).send({ message: 'Переданы некорректные данные пользователя' });
+      } else if (err.kind === 'ObjectId') {
+        res.status(404).send({ message: ' Пользователя нет в базе' });
       } else {
-        res
-          .status(500)
-          .send({ message: 'Произошла ошибка' });
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -67,9 +66,10 @@ module.exports.updateAvatar = (req, res) => {
     .catch((err) => {
       if (err.message === 'NoValidId') {
         res.status(404).send({ message: 'Пользователя нет в базе' });
-      } else {
+      } else if (err.kind === 'ObjectId') {
         res.status(400).send({ message: ' Переданы некорректные данные пользователя' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
