@@ -17,10 +17,11 @@ module.exports.deleteCard = (req, res) => {
     .catch((err) => {
       if (err.message === 'notValidId') {
         res.status(404).send({ message: 'Карточки нет в базе' });
+      } else if (err.kind === 'ObjectId') {
+        res.status(400).send({ message: ' Переданы некорректные данные карточки ' });
       } else {
-        res.status(400).send({ message: ' Переданы некорректные данные карточки' });
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
 
