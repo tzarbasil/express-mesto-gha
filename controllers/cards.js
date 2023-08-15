@@ -1,5 +1,9 @@
 const Card = require('../models/card');
 
+const ForbiddenError = require('../errors/forbiddenError');
+
+const NotFoundError = require('../errors/NotFoundError');
+
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
@@ -8,21 +12,20 @@ module.exports.getCards = (req, res) => {
       .send({ message: 'Произошла ошибка' }));
 };
 
-module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .orFail(new Error('notValidId'))
+module.exports.deleteCard = (req, res, next) => {
+  Card.findById(req.params.cardId)
     .then((card) => {
-      res.send(card);
-    })
-    .catch((err) => {
-      if (err.message === 'notValidId') {
-        res.status(404).send({ message: 'Карточки нет в базе' });
-      } else if (err.kind === 'ObjectId') {
-        res.status(400).send({ message: ' Переданы некорректные данные карточки ' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+      if (!card) {
+        throw new NotFoundError('Карточка с указанным id не найдена');
+      } else if (card.owner.toString() !== req.user._id) {
+        return Promise.reject(
+          new ForbiddenError('Вы не можете удалить эту карточку'),
+        );
       }
-    });
+      return Card.deleteOne(card)
+        .then(() => res.status(200).send({ message: 'Карточка удалена' }));
+    })
+    .catch(next);
 };
 
 module.exports.createCard = (req, res) => {

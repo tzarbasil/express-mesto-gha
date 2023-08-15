@@ -66,10 +66,10 @@ module.exports.createUser = (req, res) => {
         res
           .status(400)
           .send({ message: ' Переданы некорректные данные пользователя' });
+      } else if (err.code === 11000) {
+        res.status(409).send({ message: ' Пользователь уже существует' });
       } else {
-        res
-          .status(500)
-          .send({ message: 'Произошла ошибка' });
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
 };

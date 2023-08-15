@@ -2,6 +2,7 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 
+const { errors } = require('celebrate');
 // eslint-disable-next-line import/no-unresolved
 // const helmet = require('helmet');
 
@@ -22,6 +23,15 @@ app.use(express.json());
 
 app.use(router);
 
+app.use(errors());
+app.use((err, req, res, next) => {
+  const { message } = err;
+  console.log(message);
+  res.status(err.statusCode).send({
+    message: err.statusCode === 500 ? 'На сервере произошла ошибка' : message,
+  });
+  next();
+});
 // app.use(helmet());
 
 app.listen(PORT, () => {
