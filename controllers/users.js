@@ -5,9 +5,9 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/badRequestError');
 const ConflictingError = require('../errors/conflitingError');
-const AuthorizationError = require('../errors/authorizationError');
+// const AuthorizationError = require('../errors/authorizationError');
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -17,17 +17,15 @@ module.exports.login = (req, res) => {
         token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
       });
     })
-    .catch(() => {
-      throw new AuthorizationError('Неверный логин или пароль');
-    });
+    .catch(next);
 };
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send(users))
-    .catch(() => res
-      .status(500)
-      .send({ message: 'На сервере произошла ошибка' }));
+    .then((users) => {
+      res.send(users);
+    })
+    .catch(next);
 };
 
 module.exports.getUser = (req, res, next) => {
