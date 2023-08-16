@@ -5,7 +5,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/badRequestError');
 const ConflictingError = require('../errors/conflitingError');
-// const AuthorizationError = require('../errors/authorizationError');
+const AuthorizationError = require('../errors/authorizationError');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -17,7 +17,7 @@ module.exports.login = (req, res, next) => {
         token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
       });
     })
-    .catch(next);
+    .catch(() => next(new AuthorizationError('Неверный логин или пароль')));
 };
 
 module.exports.getUsers = (req, res, next) => {
