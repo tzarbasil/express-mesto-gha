@@ -12,7 +12,13 @@ app.use(express.json());
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 // eslint-disable-next-line import/no-unresolved, import/extensions
-const router = require('./routes/users');
+const usersRouter = require('./routes/users');
+
+const cardsRouter = require('./routes/cards');
+
+app.use(usersRouter);
+app.use(cardsRouter);
+
 const { login, createUser } = require('./controllers/users');
 
 app.post('/signin', login);
@@ -20,13 +26,11 @@ app.post('/signup', createUser);
 
 mongoose.connect(DB_URL);
 
-app.use(router);
-
 app.use(errors());
 app.use((err, req, res, next) => {
   const { message, statusCode = 500 } = err;
   console.log(message);
-  res.status(err).send({
+  res.status(statusCode).send({
     message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
   });
   next();

@@ -55,7 +55,6 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(
@@ -75,8 +74,8 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user.id, { name, about })
-    .then((user) => res.status(201).send(user))
+  User.findByIdAndUpdate(req.user._id, { name, about })
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(
