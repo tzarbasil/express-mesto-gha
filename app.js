@@ -5,15 +5,12 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 // eslint-disable-next-line import/no-unresolved
 // const helmet = require('helmet');
-const auth = require('./middlewares/auth');
 
 const app = express();
+app.use(express.json());
 
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
-app.use(auth);
-app.use('/cards', require('./routes/cards'));
-app.use('/users', require('./routes/users'));
 // eslint-disable-next-line import/no-unresolved, import/extensions
 const router = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
@@ -34,6 +31,7 @@ app.use((err, req, res, next) => {
   });
   next();
 });
+
 // app.use(helmet());
 
 app.listen(PORT, () => {

@@ -14,7 +14,7 @@ module.exports.login = (req, res, next) => {
 
     .then((user) => {
       res.send({
-        token: jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }),
+        token: jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' }),
       });
     })
     .catch(() => next(new AuthorizationError('Неверный логин или пароль')));
