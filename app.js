@@ -16,13 +16,13 @@ const usersRouter = require('./routes/users');
 
 const cardsRouter = require('./routes/cards');
 
-app.use(usersRouter);
-app.use(cardsRouter);
-
 const { login, createUser } = require('./controllers/users');
 
 app.post('/signin', login);
 app.post('/signup', createUser);
+
+app.use(usersRouter);
+app.use(cardsRouter);
 
 mongoose.connect(DB_URL);
 
