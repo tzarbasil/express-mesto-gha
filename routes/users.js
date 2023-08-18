@@ -13,8 +13,8 @@ const {
 router.use(auth);
 
 router.get('/users', getUsers);
-router.get('/users/:id', celebrate.validateUserId, getUser);
 router.get('/users/me', getCurrentUser);
+router.get('/users/:id', celebrate.validateUserId, getUser);
 router.patch('/users/me', celebrate.validateUpdateUser, updateUser);
 router.patch('/users/me/avatar', celebrate.validateUserAvatar, updateAvatar);
 
